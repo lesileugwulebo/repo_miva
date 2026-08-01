@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS–Azure Secure Multi-Cloud Control Center</title>
+    <meta name="description" content="Management, Topology Inspection, Zero Trust Auditor, and Real-time Failover Simulation for AWS-Azure Architecture">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for Live Performance Graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+
+    <!-- Top Navigation Bar -->
+    <header class="app-header">
+        <div class="header-left">
+            <div class="logo-icon">
+                <i class="fa-solid fa-network-wired"></i>
+            </div>
+            <div class="logo-text">
+                <h1>MultiCloud<span>Sphere</span></h1>
+                <p>AWS–Azure Secure Reference Architecture</p>
+            </div>
+        </div>
+        
+        <div class="header-status">
+            <div class="status-pill status-healthy" id="cloud-status-indicator">
+                <span class="pulse-dot"></span>
+                <span id="status-text">All Systems Operational</span>
+            </div>
+            <div class="vpn-badge">
+                <i class="fa-solid fa-lock"></i> IPsec BGP Mesh (Active-Active)
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <button id="btn-simulate-failover" class="btn btn-warning">
+                <i class="fa-solid fa-bolt"></i> Simulate Tunnel Failover
+            </button>
+            <button id="btn-run-diagnostics" class="btn btn-primary">
+                <i class="fa-solid fa-play"></i> Run Live Probe
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="dashboard-container">
+        
+        <!-- Sidebar Menu -->
+        <aside class="sidebar">
+            <nav class="nav-menu">
+                <a href="#topology" class="nav-item active" id="nav-topology">
+                    <i class="fa-solid fa-diagram-project"></i> Topology Inspector
+                </a>
+                <a href="#diagnostics" class="nav-item" id="nav-diagnostics">
+                    <i class="fa-solid fa-chart-line"></i> Performance & Latency
+                </a>
+                <a href="#zerotrust" class="nav-item" id="nav-zerotrust">
+                    <i class="fa-solid fa-shield-halved"></i> Zero Trust Auditor
+                </a>
+                <a href="#iac" class="nav-item" id="nav-iac">
+                    <i class="fa-solid fa-code"></i> Terraform State
+                </a>
+                <a href="#compliance" class="nav-item" id="nav-compliance">
+                    <i class="fa-solid fa-scale-balanced"></i> Governance & Compliance
+                </a>
+            </nav>
+
+            <div class="sidebar-card">
+                <h4><i class="fa-solid fa-circle-info"></i> Project Context</h4>
+                <p>MIVA Master's Project Architecture. Evaluates AWS TGW + Azure VPN Gateway integration.</p>
+                <div class="badge-group">
+                    <span class="chip">NIST SP 800-207</span>
+                    <span class="chip">NDPA 2023</span>
+                    <span class="chip">CSA CCM 4.1</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- Key Metrics Overview Banner -->
+            <section class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon aws-bg">
+                        <i class="fa-brands fa-aws"></i>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-label">AWS VPC Subnets</span>
+                        <span class="metric-value">10 Subnets</span>
+                        <span class="metric-sub">10.10.0.0/16 (us-east-1)</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon azure-bg">
+                        <i class="fa-brands fa-microsoft"></i>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-label">Azure VNet Subnets</span>
+                        <span class="metric-value">4 Subnets</span>
+                        <span class="metric-sub">10.20.0.0/16 (eastus)</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon vpn-bg">
+                        <i class="fa-solid fa-shield-virus"></i>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-label">Inter-Cloud RTT Latency</span>
+                        <span class="metric-value" id="metric-latency">42.5 ms</span>
+                        <span class="metric-sub text-success"><i class="fa-solid fa-check"></i> Below 100ms Target</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon throughput-bg">
+                        <i class="fa-solid fa-gauge-high"></i>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-label">TCP Bandwidth</span>
+                        <span class="metric-value" id="metric-bandwidth">145.2 Mbps</span>
+                        <span class="metric-sub">4 Parallel iperf3 Streams</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Topology Inspector Section -->
+            <section id="section-topology" class="content-section active">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-diagram-project"></i> Live Architectural Topology Inspector</h2>
+                    <p>Click any node to view configuration details, security group rules, and private network telemetry.</p>
+                </div>
+
+                <div class="topology-wrapper">
+                    <div class="canvas-container">
+                        <!-- Interactive Nodes Grid -->
+                        <div class="cloud-zone aws-zone">
+                            <div class="zone-title"><i class="fa-brands fa-aws"></i> AWS Region (us-east-1)</div>
+                            
+                            <div class="tier-box">
+                                <span class="tier-label">Public Ingress Tier (10.10.10.0/24)</span>
+                                <div class="node-item" id="node-alb" data-node="alb">
+                                    <i class="fa-solid fa-globe"></i>
+                                    <span>Application Load Balancer</span>
+                                    <span class="node-ip">alb.us-east-1.elb.amazonaws.com</span>
+                                </div>
+                            </div>
+
+                            <div class="tier-box">
+                                <span class="tier-label">Web Proxy Tier (10.10.20.0/24)</span>
+                                <div class="node-item" id="node-web" data-node="web">
+                                    <i class="fa-solid fa-server"></i>
+                                    <span>Nginx Reverse Proxy</span>
+                                    <span class="node-ip">10.10.20.14</span>
+                                </div>
+                            </div>
+
+                            <div class="tier-box">
+                                <span class="tier-label">Application API Tier (10.10.30.0/24)</span>
+                                <div class="node-item" id="node-app" data-node="app">
+                                    <i class="fa-solid fa-code"></i>
+                                    <span>Python Flask App API</span>
+                                    <span class="node-ip">10.10.30.22</span>
+                                </div>
+                            </div>
+
+                            <div class="tier-box private-tier">
+                                <span class="tier-label">Private Database Tier (10.10.40.0/24)</span>
+                                <div class="node-item" id="node-db" data-node="db">
+                                    <i class="fa-solid fa-database"></i>
+                                    <span>PostgreSQL Database</span>
+                                    <span class="node-ip">10.10.40.10 (No Public IP)</span>
+                                </div>
+                            </div>
+
+                            <div class="transit-box">
+                                <div class="node-item" id="node-tgw" data-node="tgw">
+                                    <i class="fa-solid fa-route"></i>
+                                    <span>AWS Transit Gateway</span>
+                                    <span class="node-ip">ASN: 64512</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tunnel Bridge -->
+                        <div class="tunnel-bridge">
+                            <div class="tunnel-pipe active" id="tunnel-1">
+                                <span class="tunnel-label"><i class="fa-solid fa-lock"></i> IPsec Tunnel 1 (AES-256)</span>
+                                <div class="packet-flow"></div>
+                            </div>
+                            <div class="tunnel-pipe active" id="tunnel-2">
+                                <span class="tunnel-label"><i class="fa-solid fa-lock"></i> IPsec Tunnel 2 (AES-256)</span>
+                                <div class="packet-flow"></div>
+                            </div>
+                        </div>
+
+                        <!-- Azure Zone -->
+                        <div class="cloud-zone azure-zone">
+                            <div class="zone-title"><i class="fa-brands fa-microsoft"></i> Azure Region (eastus)</div>
+                            
+                            <div class="transit-box">
+                                <div class="node-item" id="node-vng" data-node="vng">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                    <span>Active-Active Azure VPN Gateway</span>
+                                    <span class="node-ip">GatewaySubnet | ASN: 65515</span>
+                                </div>
+                            </div>
+
+                            <div class="tier-box">
+                                <span class="tier-label">Supporting Service Subnet (10.20.10.0/24)</span>
+                                <div class="node-item" id="node-azsvc" data-node="azsvc">
+                                    <i class="fa-solid fa-cloud-bolt"></i>
+                                    <span>Azure Supporting VM Service</span>
+                                    <span class="node-ip">10.20.10.10:8080</span>
+                                </div>
+                            </div>
+
+                            <div class="tier-box">
+                                <span class="tier-label">Monitoring & Governance</span>
+                                <div class="node-item" id="node-azmon" data-node="azmon">
+                                    <i class="fa-solid fa-chart-pie"></i>
+                                    <span>Log Analytics & Defender</span>
+                                    <span class="node-ip">snet-monitoring</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Selected Node Inspector Drawer -->
+                    <div class="node-inspector" id="inspector-panel">
+                        <div class="inspector-header">
+                            <h3 id="inspect-name">Select a Component</h3>
+                            <span class="badge" id="inspect-status">Idle</span>
+                        </div>
+                        <div class="inspector-body">
+                            <p class="inspect-desc" id="inspect-desc">Click any architecture node in the canvas to inspect detailed metadata, security policies, and live diagnostics.</p>
+                            
+                            <div class="detail-group">
+                                <span class="detail-label">IP / Addressing:</span>
+                                <span class="detail-val" id="inspect-ip">-</span>
+                            </div>
+                            <div class="detail-group">
+                                <span class="detail-label">Security Mechanism:</span>
+                                <span class="detail-val" id="inspect-sec">-</span>
+                            </div>
+                            <div class="detail-group">
+                                <span class="detail-label">Inbound Policy:</span>
+                                <span class="detail-val code-val" id="inspect-inbound">-</span>
+                            </div>
+                            <div class="detail-group">
+                                <span class="detail-label">Outbound Policy:</span>
+                                <span class="detail-val code-val" id="inspect-outbound">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Performance & Latency Section -->
+            <section id="section-diagnostics" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-chart-line"></i> Performance & Latency Telemetry</h2>
+                    <p>Real-time cross-cloud round-trip ping time (ICMP) and TCP throughput (iperf3) performance monitoring.</p>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>AWS $\leftrightarrow$ Azure Round-Trip Latency (ms)</h3>
+                            <span class="tag-badge">Target: &lt; 100ms</span>
+                        </div>
+                        <div class="chart-box">
+                            <canvas id="latencyChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>TCP Throughput by Parallel Stream Count (Mbps)</h3>
+                            <span class="tag-badge">iperf3 Test Suite</span>
+                        </div>
+                        <div class="chart-box">
+                            <canvas id="throughputChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Failover Test Execution Log -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3><i class="fa-solid fa-terminal"></i> Failover & Resilience Event Log (RTO Tracker)</h3>
+                        <button id="btn-clear-log" class="btn btn-sm btn-outline"><i class="fa-solid fa-trash"></i> Clear</button>
+                    </div>
+                    <div class="terminal-window" id="terminal-log">
+                        <div class="log-line info">[SYSTEM INITIALIZED] Ready to execute continuous 1-second cross-cloud health probes...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Zero Trust Security Auditor Section -->
+            <section id="section-zerotrust" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-shield-halved"></i> Zero Trust Access Enforcement Matrix</h2>
+                    <p>Verify that explicit policies allow legitimate application traffic while strictly blocking unauthorized lateral movement.</p>
+                </div>
+
+                <div class="matrix-grid">
+                    <div class="matrix-card">
+                        <h3><i class="fa-solid fa-list-check"></i> Security Rules Enforcement</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Flow ID</th>
+                                    <th>Source</th>
+                                    <th>Destination</th>
+                                    <th>Port</th>
+                                    <th>Expected</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="matrix-table-body">
+                                <!-- Populated dynamically by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="matrix-summary">
+                        <div class="scanner-card prowler-card">
+                            <div class="scanner-header">
+                                <i class="fa-solid fa-shield-cat"></i>
+                                <div>
+                                    <h4>Prowler Security Posture</h4>
+                                    <p>AWS & Azure Configuration Audit</p>
+                                </div>
+                            </div>
+                            <div class="score-display">
+                                <span class="score-num">98.4%</span>
+                                <span class="score-label">Pass Rate (0 Critical Unresolved)</span>
+                            </div>
+                        </div>
+
+                        <div class="scanner-card scout-card">
+                            <div class="scanner-header">
+                                <i class="fa-solid fa-binoculars"></i>
+                                <div>
+                                    <h4>ScoutSuite Assessment</h4>
+                                    <p>Multi-Cloud Attack Surface Scan</p>
+                                </div>
+                            </div>
+                            <div class="score-display">
+                                <span class="score-num">0</span>
+                                <span class="score-label">High-Risk Vulnerabilities</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Terraform Code & State Section -->
+            <section id="section-iac" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-code"></i> Terraform Infrastructure as Code Viewer</h2>
+                    <p>Inspect the declared HCL modules and validated state backend components.</p>
+                </div>
+
+                <div class="code-viewer-container">
+                    <div class="code-tabs">
+                        <button class="code-tab active" data-file="aws-network">aws-network.tf</button>
+                        <button class="code-tab" data-file="azure-network">azure-network.tf</button>
+                        <button class="code-tab" data-file="vpn">vpn.tf</button>
+                        <button class="code-tab" data-file="aws-security">aws-security.tf</button>
+                    </div>
+                    <pre class="code-block"><code id="code-display">// Loading HCL code module...</code></pre>
+                </div>
+            </section>
+
+            <!-- Governance & Compliance Section -->
+            <section id="section-compliance" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-scale-balanced"></i> Regulatory & Data Governance Mapping</h2>
+                    <p>Alignment with Nigerian Data Protection Act (NDPA 2023) and National Cloud Policy 2025.</p>
+                </div>
+
+                <div class="compliance-cards-grid">
+                    <div class="compliance-card">
+                        <div class="comp-icon"><i class="fa-solid fa-gavel"></i></div>
+                        <h3>Nigeria Data Protection Act (NDPA 2023)</h3>
+                        <ul>
+                            <li><i class="fa-solid fa-check text-success"></i> <strong>Data Residency:</strong> Sensitive database tier strictly maintained in private subnets without public ingress.</li>
+                            <li><i class="fa-solid fa-check text-success"></i> <strong>Cross-Border Transfer:</strong> Inter-cloud data transport encrypted using FIPS-compliant AES-256 IPsec tunnels.</li>
+                            <li><i class="fa-solid fa-check text-success"></i> <strong>Accountability:</strong> Immutable audit logging via AWS CloudTrail and Azure Activity Logs.</li>
+                        </ul>
+                    </div>
+
+                    <div class="compliance-card">
+                        <div class="comp-icon"><i class="fa-solid fa-cloud-shield"></i></div>
+                        <h3>National Cloud Policy 2025</h3>
+                        <ul>
+                            <li><i class="fa-solid fa-check text-success"></i> <strong>Cloud-First Alignment:</strong> Native AWS Transit Gateway and Azure VPN Gateway integration.</li>
+                            <li><i class="fa-solid fa-check text-success"></i> <strong>Sovereignty & Security:</strong> Zero Trust micro-segmentation limiting cross-provider reachability.</li>
+                            <li><i class="fa-solid fa-check text-success"></i> <strong>Identity Control:</strong> Centralized workforce federation via Entra ID & AWS IAM Identity Center.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
