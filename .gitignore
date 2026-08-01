@@ -1,0 +1,28 @@
+# Terraform local files
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+
+# Secret variable files & keys
+*.auto.tfvars
+*.auto.tfvars.json
+terraform.tfvars
+private/
+*.pem
+*.key
+*.pfx
+*.p12
+
+# OS & Editor files
+.env
+.env.*
+.vscode/
+.idea/
+.DS_Store
+
+# Reports
+reports/
+screenshots/private/
