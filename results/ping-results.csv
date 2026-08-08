@@ -1,0 +1,11 @@
+direction,run,average_rtt_ms
+GCP -> AWS,1,42.1
+GCP -> AWS,2,41.8
+GCP -> AWS,3,43.5
+GCP -> AWS,4,42.0
+GCP -> AWS,5,41.9
+AWS -> GCP,1,44.0
+AWS -> GCP,2,43.2
+AWS -> GCP,3,44.8
+AWS -> GCP,4,43.1
+AWS -> GCP,5,42.9

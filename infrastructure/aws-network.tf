@@ -17,15 +17,17 @@ resource "aws_internet_gateway" "main" {
 }
 
 resource "aws_subnet" "main" {
-  for_each                = local.aws_subnets
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = each.value.cidr
-  availability_zone       = data.aws_availability_zones.available.names[each.value.az]
-  map_public_ip_on_launch = each.value.public
+  for_each          = local.aws_subnets
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = each.value.cidr
+  availability_zone = each.value.az
+
+  # Enable public IP only for the gateway subnet
+  map_public_ip_on_launch = each.key == "gateway" ? true : false
 
   tags = {
     Name = "${local.name_prefix}-${each.key}"
-    Tier = split("_", each.key)[0]
+    Tier = each.key
   }
 }
 
@@ -40,7 +42,7 @@ resource "aws_eip" "nat" {
 
 resource "aws_nat_gateway" "main" {
   allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.main["public_a"].id
+  subnet_id     = aws_subnet.main["gateway"].id
   depends_on    = [aws_internet_gateway.main]
 
   tags = {
@@ -49,7 +51,7 @@ resource "aws_nat_gateway" "main" {
 }
 
 # Route Tables
-resource "aws_route_table" "public" {
+resource "aws_route_table" "gateway" {
   vpc_id = aws_vpc.main.id
 
   route {
@@ -58,17 +60,16 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "${local.name_prefix}-public-rt"
+    Name = "${local.name_prefix}-gateway-rt"
   }
 }
 
-resource "aws_route_table_association" "public" {
-  for_each       = toset(["public_a", "public_b"])
-  subnet_id      = aws_subnet.main[each.value].id
-  route_table_id = aws_route_table.public.id
+resource "aws_route_table_association" "gateway" {
+  subnet_id      = aws_subnet.main["gateway"].id
+  route_table_id = aws_route_table.gateway.id
 }
 
-resource "aws_route_table" "web" {
+resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
   route {
@@ -77,71 +78,20 @@ resource "aws_route_table" "web" {
   }
 
   tags = {
-    Name = "${local.name_prefix}-web-rt"
+    Name = "${local.name_prefix}-private-rt"
   }
 }
 
-resource "aws_route_table_association" "web" {
-  for_each       = toset(["web_a", "web_b"])
+resource "aws_route_table_association" "private" {
+  for_each       = toset(["service", "monitoring", "management"])
   subnet_id      = aws_subnet.main[each.value].id
-  route_table_id = aws_route_table.web.id
-}
-
-resource "aws_route_table" "application" {
-  vpc_id = aws_vpc.main.id
-
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.main.id
-  }
-
-  tags = {
-    Name = "${local.name_prefix}-application-rt"
-  }
-}
-
-resource "aws_route_table_association" "application" {
-  for_each       = toset(["app_a", "app_b"])
-  subnet_id      = aws_subnet.main[each.value].id
-  route_table_id = aws_route_table.application.id
-}
-
-resource "aws_route_table" "database" {
-  vpc_id = aws_vpc.main.id
-
-  tags = {
-    Name = "${local.name_prefix}-database-rt"
-  }
-}
-
-resource "aws_route_table_association" "database" {
-  for_each       = toset(["db_a", "db_b"])
-  subnet_id      = aws_subnet.main[each.value].id
-  route_table_id = aws_route_table.database.id
-}
-
-resource "aws_route_table" "management" {
-  vpc_id = aws_vpc.main.id
-
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.main.id
-  }
-
-  tags = {
-    Name = "${local.name_prefix}-management-rt"
-  }
-}
-
-resource "aws_route_table_association" "management" {
-  subnet_id      = aws_subnet.main["management"].id
-  route_table_id = aws_route_table.management.id
+  route_table_id = aws_route_table.private.id
 }
 
 # AWS Transit Gateway
 resource "aws_ec2_transit_gateway" "main" {
   description                     = "AWS transit hub for the secure multi-cloud lab"
-  amazon_side_asn                 = var.aws_tgw_asn
+  amazon_side_asn                 = var.aws_vpn_asn
   auto_accept_shared_attachments  = "disable"
   default_route_table_association = "disable"
   default_route_table_propagation = "disable"
@@ -155,8 +105,8 @@ resource "aws_ec2_transit_gateway" "main" {
 
 resource "aws_ec2_transit_gateway_vpc_attachment" "main" {
   subnet_ids = [
-    aws_subnet.main["transit_a"].id,
-    aws_subnet.main["transit_b"].id
+    aws_subnet.main["gateway"].id,
+    aws_subnet.main["monitoring"].id
   ]
   transit_gateway_id = aws_ec2_transit_gateway.main.id
   vpc_id             = aws_vpc.main.id
@@ -186,17 +136,10 @@ resource "aws_ec2_transit_gateway_route_table_propagation" "vpc" {
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.main.id
 }
 
-# VPC Routes to Azure
-resource "aws_route" "application_to_azure" {
-  route_table_id         = aws_route_table.application.id
-  destination_cidr_block = var.azure_vnet_cidr
-  transit_gateway_id     = aws_ec2_transit_gateway.main.id
-  depends_on             = [aws_ec2_transit_gateway_vpc_attachment.main]
-}
-
-resource "aws_route" "management_to_azure" {
-  route_table_id         = aws_route_table.management.id
-  destination_cidr_block = var.azure_vnet_cidr
+# Route from AWS Private Subnets to GCP via Transit Gateway
+resource "aws_route" "private_to_gcp" {
+  route_table_id         = aws_route_table.private.id
+  destination_cidr_block = var.gcp_vpc_cidr
   transit_gateway_id     = aws_ec2_transit_gateway.main.id
   depends_on             = [aws_ec2_transit_gateway_vpc_attachment.main]
 }

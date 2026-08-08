@@ -1,0 +1,327 @@
+=== PARAGRAPH PLACEHOLDERS ===
+P69: The Nigerian National Cloud Policy 2025 illustrates the increasing policy importance of secure and sovereign cloud adoption. The policy promotes a Cloud First direction while also emphasising data classification, sovereignty, secure cloud use and local data- residency considerations. It supersedes the earlier Nigeria Cloud Computing Policy and provides a more current basis for evaluating the national context of cloud architecture (National Information Technology Development Agency [NITDA], 2025).
+P975: condition   = contains(["lab", "test"], var.environment)
+P1529: condition         = contains(["lab", "test"], var.environment)
+P1682: owners          = ["099720109477"]
+P1685: values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*"]
+P1689: values = ["hvm"]
+P1713: Tier = split("_", each.key)[0]
+P1733: for_each = toset(["public_a", "public_b"])
+P1750: for_each = toset(["app_a", "app_b"])
+P1755: for_each = toset(["db_a", "db_b"])
+P1776: subnet_ids = [
+P1793: depends_on = [
+P1794: ]
+P1797: depends_on = [
+P1798: ]
+P1814: cidr_blocks = ["0.0.0.0/0"]
+P1820: cidr_blocks = ["0.0.0.0/0"]
+P1865: cidr_blocks = ["10.121.10.0/24"]
+P1877: cidr_blocks = ["10.121.10.0/24"]
+P1884: cidr_blocks = ["0.0.0.0/0"]
+P1917: cidr_blocks = [var.administrator_cidr]
+P1930: cidr_blocks = ["10.121.10.0/24"] }
+P1936: cidr_blocks = ["0.0.0.0/0"]
+P1949: identifiers = ["ec2.amazonaws.com"] }
+P1950: actions = ["sts:AssumeRole"]
+P1968: actions = [
+P1971: ]
+P1972: resources = [
+P1973: ]
+P1978: actions = [
+P1981: ]
+P1982: resources = [
+P1983: ]
+P1987: actions = [
+P1991: ]
+P1992: resources = [
+P1993: ]
+P2156: [Unit]
+P2160: [Service]
+P2168: [Install] WantedBy=multi-user.target
+P2181: depends_on = [
+P2182: ]
+P2216: depends_on = [
+P2217: ]
+P2223: security_groups = [
+P2224: ]
+P2225: subnets = [
+P2226: ]
+P2268: address_space     = [var.aws_vnet_cidr]
+P2274: address_prefixes   = ["10.121.0.0/27"]
+P2279: address_prefixes   = ["10.121.10.0/24"]
+P2283: virtual_network_name = awsrm_virtual_network.main.name address_prefixes     = ["10.121.20.0/24"]
+P2288: address_prefixes     = ["10.121.30.0/24"]
+P2374: key_opts = [
+P2381: ]
+P2394: depends_on = [
+P2396: ]
+P2432: network_interface_ids = [
+P2434: ]
+P2483: [Unit]
+P2486: Wants=network-online.target [Service]
+P2493: [Install]
+P2509: principal_id           = awsrm_linux_virtual_machine.service.identity[0].principal_id
+P2519: zones          = ["1", "2", "3"]
+P2526: zones          = ["1", "2", "3"]
+P2583: tunnel1_ike_versions = ["ikev2"]
+P2584: tunnel1_phase1_encryption_algorithms = ["AES256"]
+P2585: tunnel1_phase1_integrity_algorithms = ["SHA2-256"]
+P2586: tunnel1_phase1_dh_group_numbers      = [14]
+P2587: tunnel1_phase2_encryption_algorithms = ["AES256"]
+P2588: tunnel1_phase2_integrity_algorithms = ["SHA2-256"]
+P2589: tunnel1_phase2_dh_group_numbers      = [14] tunnel1_dpd_timeout_action = "restart"
+P2597: tunnel1_ike_versions = ["ikev2"]
+P2598: tunnel1_phase1_encryption_algorithms = ["AES256"]
+P2599: tunnel1_phase1_integrity_algorithms = ["SHA2-256"]
+P2600: tunnel1_phase1_dh_group_numbers          = [14]
+P2601: tunnel1_phase2_encryption_algorithms = ["AES256"]
+P2602: tunnel1_phase2_integrity_algorithms = ["SHA2-256"]
+P2603: tunnel1_phase2_dh_group_numbers          = [14]
+P2677: --query 'VpnConnections[].VgwTelemetry[].{ OutsideIp:OutsideIpAddress,
+P2716: identifiers = ["vpc-flow-logs.amazonaws.com"]
+P2718: actions = ["sts:AssumeRole"]
+P2723: actions = [
+P2729: ]
+P2730: resources = ["*"]
+P2774: identifiers = ["cloudtrail.amazonaws.com"]
+P2776: actions = ["s3:GetBucketAcl"]
+P2777: resources = [
+P2778: ]
+P2785: identifiers = ["cloudtrail.amazonaws.com"]
+P2787: actions = ["s3:PutObject"]
+P2788: resources = [
+P2789: ] condition {
+P2792: values = ["bucket-owner-full-control"]
+P2805: } depends_on = [
+P2806: ]
+P2921: streams       = ["Microsoft-Syslog"]
+P2922: destinations = ["law-destination"]
+P2927: streams       = ["Microsoft-Syslog"]
+P2928: facility_names = ["auth", "authpriv", "daemon", "syslog", "user"]
+P2929: log_levels    = ["Warning", "Error", "Critical", "Alert", "Emergency"]
+P2941: scopes        = [awsrm_virtual_network_gateway.main.id]
+P3056: actions = [
+P3068: "logs:GetQueryResults" ]
+P3069: resources = ["*"]
+P3260: "collect_list": [
+P3273: ]
+P3280: "measurement": [
+P3282: ],
+P3286: "measurement": [
+P3288: ],
+P3289: "resources": [
+P3291: ],
+P3307: --query 'DetectorIds[0]' \
+P3454: The chapter does not invent experimental results. Where actual cloud outputs have not yet been supplied, result fields are presented as controlled placeholders marked [INSERT ACTUAL RESULT]. These fields must be replaced with evidence obtained from the implemented environment before the final report is submitted. The interpretation framework is complete, but the conclusions must be updated to reflect the measurements actually obtained.
+P3541: FT-   Terraform        terraform validate      Configuration    [INSERT] [PASS/FAIL] 02    validation                               is valid
+P3542: FT-   GCP VPN          gcloud CLI/console         Selected        [INSERT] [PASS/FAIL] 05    status                                   tunnels operational
+P3543: FT-   AWS VPN        AWS CLI/portal        Connections     [INSERT] [PASS/FAIL] 06    status                                   show Connected
+P3544: FT-   BGP peer         AWS and Google Cloud route     Peers           [INSERT] [PASS/FAIL] 07    status           inspection              established
+P3545: FT-   GCP route        Network Connectivity Center route   AWS prefix     [INSERT] [PASS/FAIL] 08    learning         table                   visible
+P3546: FT-   AWS route      VPN Gateway BGP         GCP prefix       [INSERT] [PASS/FAIL] 09    learning         routes                  visible FT-    GCP             curl /health             HTTP 200        [INSERT] [PASS/FAIL] 10     application                              response health
+P3547: FT-    AWS           curl                    HTTP 200         [INSERT] [PASS/FAIL] 11     service         10.121.10.10:8080/health response health
+P3548: FT-    End-to-end      curl /aws-health       Valid AWS     [INSERT] [PASS/FAIL] 12     cloud call                               response returned through GCP web path
+P3549: FT-    Application-    PostgreSQL client test   Authorised      [INSERT] [PASS/FAIL] 13     to-database                              connection succeeds
+P3550: FT-    Google Cloud logs        Cloud Monitoring/Cloud Audit Logs    Known event     [INSERT] [PASS/FAIL] 14     generated       review                   appears
+P3551: FT-    AWS logs      Log Analytics review     Known event     [INSERT] [PASS/FAIL] 15     generated                                appears
+P3558: Test date:        [INSERT]
+P3559: GCP endpoint:          [REDACTED OR INSERT APPROVED VALUE] HTTP status:       [INSERT]
+P3560: Total request duration: [INSERT]
+P3561: AWS service response: [INSERT]
+P3562: Outcome:           [PASS/FAIL]
+P3567: Total functional tests executed [INSERT]
+P3568: Passed                            [INSERT]
+P3569: Failed                            [INSERT]
+P3570: Pass rate                         [INSERT]%
+P3571: Tests requiring retest            [INSERT]
+P3603: ST-   Internet       GCP load        80/443   Permit     [INSERT]   [PASS/FAIL] 01                   balancer                 approved entry
+P3604: ST-   Internet       GCP             5432     Deny/no    [INSERT]   [PASS/FAIL] 02                   database                 public address
+P3605: ST-   GCP load       GCP web tier    80       Permit     [INSERT]   [PASS/FAIL] 03    balancer
+P3606: ST-   GCP web tier   GCP             8080     Permit     [INSERT]   [PASS/FAIL] 04                   application tier
+P3607: ST-   GCP web tier   GCP             5432     Deny       [INSERT]   [PASS/FAIL] 05                   database
+P3608: ST-   GCP            GCP             5432     Permit     [INSERT]   [PASS/FAIL] 06    application    database tier
+P3609: ST-   GCP            AWS service   8080     Permit     [INSERT]   [PASS/FAIL] 07    application tier
+P3610: ST-   GCP            AWS iperf3    5201     Permit     [INSERT]   [PASS/FAIL] 08    management     server                   during host                                    test ST-   AWS service   GCP              5432          Deny         [INSERT]    [PASS/FAIL] 09    subnet          database
+P3611: ST-   AWS service   GCP web tier     22            Deny         [INSERT]    [PASS/FAIL] 10    subnet
+P3612: ST-   Unapproved    GCP                22            Deny         [INSERT]    [PASS/FAIL] 11    public source management service
+P3613: ST-   AWS           GCP              Any           Deny         [INSERT]    [PASS/FAIL] 12    unapproved      application      unapproved subnet          tier             port
+P3635: Expected permits that succeeded                  [INSERT]
+P3636: Expected permits that failed                     [INSERT]
+P3637: Expected denials that were blocked               [INSERT]
+P3638: Expected denials that succeeded unexpectedly [INSERT]
+P3639: Overall segmentation effectiveness                [INSERT]%
+P3645: IAM-    Assigned Entra cloud         Approved role             [INSERT]   [PASS/FAIL] 01      administrator signs in to    displayed GCP
+P3646: IAM-    Assigned security auditor    Read-only security role   [INSERT]   [PASS/FAIL] 02      signs in                     displayed
+P3647: IAM-    Unassigned Entra user        Access denied             [INSERT]   [PASS/FAIL] 03      attempts access
+P3648: IAM-    Security auditor attempts    Action denied             [INSERT]   [PASS/FAIL] 04      resource creation
+P3649: IAM-    Network administrator views View succeeds              [INSERT]   [PASS/FAIL] 05      VPN
+P3650: IAM-    Network administrator        Action denied             [INSERT]   [PASS/FAIL] 06      attempts unrelated IAM change
+P3651: IAM-    Disabled Entra user          Access denied after       [INSERT]   [PASS/FAIL] 07      attempts new session         synchronisation
+P3652: IAM-    Privileged sign-in without   Authentication blocked [INSERT]      [PASS/FAIL] 08      required MFA
+P3653: IAM-    Federated Google Cloud federated session        Temporary credentials     [INSERT]   [PASS/FAIL] 09      inspected                    confirmed IAM-    Entra and GCP audit records Corresponding sign-in      [INSERT]     [PASS/FAIL] 10      reviewed                    records found
+P3690: VPN type                       Route-based IPsec              [INSERT]      [PASS/FAIL]
+P3691: IKE version                    IKEv2                          [INSERT]      [PASS/FAIL]
+P3692: Phase 1 encryption             AES-256 or selected            [INSERT]      [PASS/FAIL] compatible equivalent
+P3693: Phase 1 integrity              SHA-256 or selected            [INSERT]      [PASS/FAIL] compatible equivalent Phase 2 encryption          AES-256 or selected                [INSERT]       [PASS/FAIL] compatible equivalent
+P3694: PFS                         Enabled where configured            [INSERT]       [PASS/FAIL]
+P3695: GCP EBS encryption          Enabled using KMS                  [INSERT]       [PASS/FAIL]
+P3696: Cloud Monitoring log-group        KMS enabled                        [INSERT]       [PASS/FAIL] encryption
+P3697: Cloud Audit Logs bucket           Cloud KMS                            [INSERT]       [PASS/FAIL] encryption
+P3698: AWS KMS and Secrets Manager             Soft delete and purge              [INSERT]       [PASS/FAIL] protection                  protection
+P3699: Amazon EC2 instance disk encryption    Platform or customer-managed       [INSERT]       [PASS/FAIL] encryption
+P3731: LOG-        GCP API query               Cloud Audit Logs           [INSERT]   [PASS/FAIL]
+P3732: LOG-        Permitted GCP application   VPC Flow Logs        [INSERT]   [PASS/FAIL] 02          flow
+P3733: LOG-        Denied GCP database flow     VPC Flow Logs        [INSERT]   [PASS/FAIL]
+P3734: LOG-        GCP application event       Cloud Monitoring           [INSERT]   [PASS/FAIL]
+P3735: LOG-        AWS resource query        Activity Log         [INSERT]   [PASS/FAIL]
+P3736: LOG-        AWS VPN event             VPN diagnostics      [INSERT]   [PASS/FAIL]
+P3737: LOG-        AWS KMS and Secrets Manager access            AWS KMS and Secrets Manager            [INSERT]   [PASS/FAIL] 07                                      diagnostics
+P3738: LOG-        Entra sign-in               Entra sign-in log    [INSERT]   [PASS/FAIL]
+P3739: LOG-        Security Command Center detector status   Security Command Center            [INSERT]   [PASS/FAIL] 09                                      console/API
+P3740: LOG-        Defender recommendation     AWS Security Hub and GuardDuty   [INSERT]   [PASS/FAIL]
+P3749: Prowler version:      [INSERT]
+P3750: Execution date:       [INSERT]
+P3751: Google Cloud project scope:        [INSERT/REDACT]
+P3752: AWS account scope: [INSERT/REDACT]
+P3753: GCP Regions assessed:      [INSERT]
+P3754: AWS Regions assessed: [INSERT]
+P3755: Compliance framework:       [INSERT]
+P3769: GCP initial scan [INSERT] [INSERT] [INSERT] [INSERT] [INSERT]                   [INSERT]
+P3770: AWS initial        [INSERT] [INSERT] [INSERT] [INSERT] [INSERT]               [INSERT] scan
+P3779: PR-01      [INSERT] [INSERT] [INSERT] [INSERT]                [INSERT]       [INSERT]
+P3780: PR-02      [INSERT] [INSERT] [INSERT] [INSERT]                [INSERT]       [INSERT]
+P3781: PR-03      [INSERT] [INSERT] [INSERT] [INSERT]                [INSERT]       [INSERT]
+P3782: PR-04      [INSERT] [INSERT] [INSERT] [INSERT]                [INSERT]       [INSERT]
+P3783: PR-05      [INSERT] [INSERT] [INSERT] [INSERT]                [INSERT]       [INSERT]
+P3793: Provider Stage Critical         High          Medium   Low       Total failed checks GCP          Initial   [INSERT] [INSERT] [INSERT] [INSERT] [INSERT]
+P3794: GCP          Final     [INSERT] [INSERT] [INSERT] [INSERT] [INSERT]
+P3795: AWS        Initial   [INSERT] [INSERT] [INSERT] [INSERT] [INSERT]
+P3796: AWS        Final     [INSERT] [INSERT] [INSERT] [INSERT] [INSERT]
+P3815: GCP initial     [INSERT] [INSERT] [INSERT]                [INSERT]
+P3816: AWS initial [INSERT] [INSERT] [INSERT]                  [INSERT]
+P3817: GCP final        [INSERT] [INSERT] [INSERT]                [INSERT]
+P3818: AWS final      [INSERT] [INSERT] [INSERT]                [INSERT]
+P3822: Public network           [INSERT]          [INSERT]        [YES/NO]     [INSERT] exposure
+P3823: IAM privilege            [INSERT]          [INSERT]        [YES/NO]     [INSERT]
+P3824: Logging                  [INSERT]          [INSERT]        [YES/NO]     [INSERT]
+P3825: Encryption               [INSERT]          [INSERT]        [YES/NO]     [INSERT] Key management            [INSERT]           [INSERT]        [YES/NO]     [INSERT]
+P3826: Network                   [INSERT]           [INSERT]        [YES/NO]     [INSERT] segmentation
+P3873: GCP →      1     [INSER    [INSER    [INSERT]   [INSERT [INSER      [INSERT    [INSERT AWS            T]        T]        %          ] ms    T] ms       ] ms       ] ms
+P3874: GCP →      2     [INSER    [INSER    [INSERT]   [INSERT [INSER      [INSERT    [INSERT AWS            T]        T]        %          ] ms    T] ms       ] ms       ] ms
+P3875: GCP →      3     [INSER    [INSER    [INSERT]   [INSERT [INSER      [INSERT    [INSERT AWS            T]        T]        %          ] ms    T] ms       ] ms       ] ms
+P3876: GCP →      4     [INSER    [INSER    [INSERT]   [INSERT [INSER      [INSERT    [INSERT AWS            T]        T]        %          ] ms    T] ms       ] ms       ] ms
+P3877: GCP →      5     [INSER    [INSER    [INSERT]   [INSERT [INSER      [INSERT    [INSERT AWS            T]        T]        %          ] ms    T] ms       ] ms       ] ms
+P3878: AWS →    1     [INSER    [INSER    [INSERT]   [INSERT [INSER      [INSERT    [INSERT GCP              T]        T]        %          ] ms    T] ms       ] ms       ] ms
+P3879: AWS →    2     [INSER    [INSER    [INSERT]   [INSERT [INSER      [INSERT    [INSERT GCP              T]        T]        %          ] ms    T] ms       ] ms       ] ms AWS →     3     [INSER      [INSER   [INSERT]     [INSERT [INSER     [INSERT    [INSERT GCP               T]          T]       %            ] ms    T] ms      ] ms       ] ms
+P3880: AWS →     4     [INSER      [INSER   [INSERT]     [INSERT [INSER     [INSERT    [INSERT GCP               T]          T]       %            ] ms    T] ms      ] ms       ] ms
+P3881: AWS →     5     [INSER      [INSER   [INSERT]     [INSERT [INSER     [INSERT    [INSERT GCP               T]          T]       %            ] ms    T] ms      ] ms       ] ms
+P3884: GCP →           [INSERT] ms     [INSERT]     [INSERT] ms     [INSERT] ms    [INSERT]% AWS                           ms
+P3885: AWS →         [INSERT] ms     [INSERT]     [INSERT] ms     [INSERT] ms    [INSERT]% GCP                             ms
+P3906: The mean GCP-to-AWS round-trip latency was [INSERT] ms, while the mean AWS-to- GCP latency was [INSERT] ms. Both/one/neither direction remained below the predefined threshold of 100 ms. The di erence of [INSERT] ms between the two directions was [small/material] and may be associated with route asymmetry, transient Internet conditions, gateway processing or instance scheduling. Packet loss was [INSERT]%, indicating [INTERPRETATION]. The result therefore [supports/does not support] the performance requirement NFR-P01.
+P3917: GCP →         [INSERT]              [INSERT]            [YES/NO]            [INSERT] AWS
+P3918: AWS →       [INSERT]              [INSERT]            [YES/NO]            [INSERT] GCP
+P3965: GCP →          1         1    [INSERT] Mbps       [INSERT] Mbps       [INSERT] AWS
+P3966: GCP →          1         2    [INSERT] Mbps       [INSERT] Mbps       [INSERT] AWS
+P3967: GCP →          1         3    [INSERT] Mbps       [INSERT] Mbps       [INSERT] AWS GCP →         4          1      [INSERT] Mbps       [INSERT] Mbps        [INSERT] AWS
+P3968: GCP →         4          2      [INSERT] Mbps       [INSERT] Mbps        [INSERT] AWS
+P3969: GCP →         4          3      [INSERT] Mbps       [INSERT] Mbps        [INSERT] AWS
+P3970: GCP →         8          1      [INSERT] Mbps       [INSERT] Mbps        [INSERT] AWS
+P3971: AWS →       1          1      [INSERT] Mbps       [INSERT] Mbps        [INSERT] GCP
+P3972: AWS →       4          1      [INSERT] Mbps       [INSERT] Mbps        [INSERT] GCP
+P3973: AWS →       8          1      [INSERT] Mbps       [INSERT] Mbps        [INSERT] GCP
+P3995: GCP →        10 Mbps      [INSERT]            [INSERT]      [INSERT]        [INSERT]% AWS                                         ms
+P3996: GCP →        25 Mbps      [INSERT]            [INSERT]      [INSERT]        [INSERT]% AWS                                         ms
+P3997: GCP →        50 Mbps      [INSERT]            [INSERT]      [INSERT]        [INSERT]% AWS                                         ms
+P3998: AWS →      10 Mbps      [INSERT]            [INSERT]      [INSERT]        [INSERT]% GCP                                           ms
+P3999: AWS →      25 Mbps      [INSERT]            [INSERT]      [INSERT]        [INSERT]% GCP                                           ms
+P4000: AWS →      50 Mbps      [INSERT]            [INSERT]      [INSERT]        [INSERT]% GCP                                           ms
+P4003: GCP →        1           [INSERT] Mbps       [INSERT]    [INSERT]    [INSERT] AWS
+P4004: GCP →        4           [INSERT] Mbps       [INSERT]    [INSERT]    [INSERT] AWS
+P4005: GCP →        8           [INSERT] Mbps       [INSERT]    [INSERT]    [INSERT] AWS
+P4006: AWS →      1           [INSERT] Mbps       [INSERT]    [INSERT]    [INSERT] GCP
+P4007: AWS →      4           [INSERT] Mbps       [INSERT]    [INSERT]    [INSERT] GCP
+P4008: AWS →      8           [INSERT] Mbps       [INSERT]    [INSERT]    [INSERT] GCP
+P4027: The highest mean receiver throughput was [INSERT] Mbps, recorded in the [INSERT DIRECTION] direction using [INSERT] parallel streams. Single-stream throughput was [INSERT] Mbps, increasing/decreasing to [INSERT] Mbps with four streams. This pattern indicates [INTERPRETATION]. Retransmissions averaged [INSERT], suggesting [LOW/MODERATE/HIGH] TCP loss or congestion. The result was below the theoretical gateway capacity, but this di erence is consistent/inconsistent with the selected VM sizes, measured latency and encryption overhead. The architecture was therefore considered [SUITABLE/UNSUITABLE] for the project’s lightweight representative workload.
+P4042: 1          [INSERT]           [INSERT]         [INSERT]       [INSERT]
+P4043: 2          [INSERT]           [INSERT]         [INSERT]       [INSERT]
+P4044: 3          [INSERT]           [INSERT]         [INSERT]       [INSERT]
+P4046: 30         [INSERT]           [INSERT]         [INSERT]       [INSERT]
+P4049: Mean response time         [INSERT] ms
+P4050: Median response time       [INSERT] ms
+P4051: 95th percentile            [INSERT] ms
+P4052: Minimum                    [INSERT] ms
+P4053: Maximum                    [INSERT] ms Successful response rate [INSERT]%
+P4100: FO-    Disable selected      Tra ic recovers       [INSERT]   [INSERT] s [PASS/FAIL] 01     VPN path 1            through path 2
+P4101: FO-    Restore path 1        Redundancy returns    [INSERT]   [INSERT] s [PASS/FAIL]
+P4102: FO-    Disable selected      Tra ic recovers       [INSERT]   [INSERT] s [PASS/FAIL] 03     VPN path 2            through path 1
+P4103: FO-    Withdraw one          Alternative route     [INSERT]   [INSERT] s [PASS/FAIL] 04     BGP route             selected
+P4104: FO-    Stop AWS service Network remains          [INSERT]   [INSERT] s [PASS/FAIL] 05     without network    available; health failure            check fails
+P4105: FO-    Restore service       Health response       [INSERT]   [INSERT] s [PASS/FAIL] 06                           resumes
+P4108: Continuous probe started             [INSERT]
+P4109: Failure injected                     [INSERT]
+P4110: First failed request                 [INSERT]
+P4111: BGP peer detected down               [INSERT]
+P4112: Alternative route became active [INSERT]
+P4113: First successful response            [INSERT]
+P4114: Stable responses confirmed            [INSERT]
+P4115: Original path restored               [INSERT]
+P4129: The first path was disabled at [INSERT TIME]. The first failed application probe occurred at [INSERT TIME], while stable successful responses resumed at [INSERT TIME]. The measured recovery time was therefore [INSERT] seconds. During the transition, [INSERT] requests failed and [INSERT] requests exceeded the normal latency range. The corresponding BGP peer changed to [INSERT STATUS], and the alternative route became active after [INSERT] seconds. The result [demonstrates/does not demonstrate] successful path redundancy. The recovery time was [acceptable/not acceptable] for the representative workload because [INSERT REASON].
+P4161: ordered["run"],
+P4162: ordered["average_rtt_ms"],
+P4198: results.groupby(["parallel_streams", "direction"])["receiver_mbps"]
+P4221: results = pd.read_csv(INPUT_FILE, parse_dates=["timestamp"]) required_columns = {"timestamp", "http_code", "total_time"}
+P4226: start_time = results["timestamp"].iloc[0]
+P4227: results["elapsed_seconds"] = (
+P4228: results["timestamp"] - start_time
+P4231: results["elapsed_seconds"],
+P4232: results["total_time"],
+P4245: Functional      End-to-end service   Successful HTTP         [INSERT]         [MET/NOT call                 response                                 MET]
+P4246: Functional      Terraform drift      No unexplained          [INSERT]         [MET/NOT change                                   MET]
+P4247: Security        Public database      None                    [INSERT]         [MET/NOT exposure                                                      MET]
+P4248: Security        Prohibited traffic    All blocked             [INSERT]         [MET/NOT MET]
+P4249: Identity        Unauthorised user    Access denied           [INSERT]         [MET/NOT MET]
+P4250: Identity        Privileged MFA       Enforced                [INSERT]         [MET/NOT MET]
+P4251: Security        Prowler critical     Zero unresolved         [INSERT]         [MET/NOT posture         findings                                                       MET]
+P4252: Security        Prowler high         Zero unresolved         [INSERT]         [MET/NOT posture         findings                                                       MET] Security        ScoutSuite serious    Zero unresolved or        [INSERT]       [MET/NOT posture         findings               formally treated                         MET]
+P4253: Logging         Known test events     All required sources      [INSERT]       [MET/NOT retrievable                                                    MET]
+P4254: Latency         Mean RTT              Below 100 ms              [INSERT]       [MET/NOT ms             MET]
+P4255: Packet loss     Normal operation      No sustained loss         [INSERT]%      [MET/NOT MET]
+P4256: Throughput      TCP throughput        Measured and              [INSERT]       [MET/NOT suitable for workload     Mbps           MET]
+P4257: Resilience      Single-path failure   Recovery                  [INSERT]       [MET/NOT demonstrated                             MET]
+P4258: Resilience      Measured RTO          Documented and            [INSERT] s     [MET/NOT acceptable                               MET]
+P4259: Encryption      IPsec/IKE             Verified                   [INSERT]       [MET/NOT MET]
+P4267: Of the [INSERT] functional tests conducted, [INSERT] passed and [INSERT] failed, producing a pass rate of [INSERT]%. The principal end-to-end application test [succeeded/failed]. The result showed that [INSERT INTERPRETATION]. The failed tests concerned [INSERT] and were addressed through [INSERT REMEDIATION]. After remediation, [INSERT] tests were repeated and [INSERT] passed.
+P4280: The segmentation tests showed that [INSERT] of [INSERT] prohibited flows were blocked. The direct web-to-database test returned [INSERT RESULT], while the authorised application-to-database test returned [INSERT RESULT]. This combination demonstrates [INSERT INTERPRETATION]. Prowler identified [INSERT] initial findings, of which [INSERT] were valid and in scope. Following remediation, [INSERT] unresolved high-risk findings remained. ScoutSuite identified [INSERT], including [INSERT KEY THEMES]. The security objective was therefore [ACHIEVED/PARTIALLY ACHIEVED/NOT ACHIEVED].
+P4285: Mean inter-cloud latency was [INSERT] ms, which was [INSERT] ms below/above the 100 ms project threshold. The 95th percentile application-response time was [INSERT] ms. Average TCP throughput ranged from [INSERT] Mbps for one stream to [INSERT] Mbps for [INSERT] parallel streams. These measurements indicate that the architecture was [INSERT ASSESSMENT] for the representative workload. The results should not be interpreted as a production service-level commitment because the test used [INSERT VM SIZES], an Internet-based VPN and a limited observation period.
+P4294: During the controlled failure of [INSERT PATH], the first application failure was recorded at [INSERT TIME]. Stable communication resumed after [INSERT] seconds. The transition caused [INSERT] failed requests. Monitoring records showed [INSERT EVENT], while the BGP peer status changed from [INSERT] to [INSERT]. The architecture therefore demonstrated [AUTOMATIC/MANUAL/UNSUCCESSFUL] recovery. The measured RTO was considered [ACCEPTABLE/UNACCEPTABLE] for the lab workload because [INSERT REASON].
+P4330: Identity federation      Entra-GCP design             [INSERT ACTUAL STATUS]
+P4331: Central monitoring       Google Cloud and AWS monitoring     [INSERT ACTUAL STATUS] design
+P4332: Evaluation: Objective Two is [ACHIEVED/PARTIALLY ACHIEVED], subject to the actual implementation and test evidence inserted in this chapter.
+P4336: GCP infrastructure managed by Terraform      [INSERT]
+P4337: AWS infrastructure managed by Terraform [INSERT]
+P4338: VPN resources managed by Terraform           [INSERT]
+P4339: Monitoring managed by Terraform              [INSERT]
+P4340: Final no-change plan                         [INSERT]
+P4341: Manual steps documented                      [INSERT]
+P4343: Objective Three was [ACHIEVED/PARTIALLY ACHIEVED/NOT ACHIEVED]. Terraform provisioned [INSERT] of the principal architecture components. The remaining manual components were [INSERT] and were required because [INSERT REASON]. The final plan reported [INSERT].
+P4347: Deny-by-default segmentation Segmentation tests           [INSERT]
+P4348: Least-privilege identity        Role tests                [INSERT]
+P4349: Federated access                SAML/SCIM tests           [INSERT]
+P4350: MFA                             Entra sign-in test        [INSERT]
+P4351: Encryption in transit           VPN configuration          [INSERT] Encryption at rest                KMS and AWS KMS and Secrets Manager tests [INSERT]
+P4352: Central visibility                Log tests                 [INSERT]
+P4353: Security scanning                 Prowler/ScoutSuite        [INSERT]
+P4355: Objective Four was [INSERT OUTCOME]. The strongest evidence was [INSERT]. The principal remaining limitation was [INSERT]. The implementation reflects Zero Trust at the network, identity and monitoring layers, although [INSERT ANY APPLICATION-LEVEL LIMITATION].
+P4359: Security               High/critical findings   [INSERT]      [MET/NOT MET]
+P4360: Security               Blocked unauthorised [INSERT]         [MET/NOT MET] flows
+P4361: Performance            Mean latency            [INSERT]      [MET/NOT MET] ms
+P4362: Performance            TCP throughput          [INSERT]      [REPORTED] Mbps
+P4363: Resilience             Recovery                [INSERT]      [MET/NOT MET] demonstrated
+P4364: Resilience             RTO                     [INSERT] s    [ACCEPTABLE/NOT ACCEPTABLE]
+P4365: Evaluation narrative Objective Five was [ACHIEVED/PARTIALLY ACHIEVED/NOT ACHIEVED]. The architecture achieved [INSERT] of the predefined evaluation criteria. The principal successful results were [INSERT], while the criteria not achieved were [INSERT]. These limitations are addressed in the recommendations in Chapter Six.
+P4374: Based on the completed test results, the artefact is classified as [INSERT CLASSIFICATION].
+P4376: This classification is supported by [INSERT NUMBER] passed functional tests, [INSERT] correctly enforced segmentation rules, [INSERT] unresolved high-risk security findings, mean latency of [INSERT] ms, throughput of [INSERT] Mbps, and a measured recovery time of [INSERT] seconds.
+P4391: The chapter also provided result tables, formulas, chart specifications and scripts for converting actual test data into publication-quality figures. The final evaluation must be based on observed implementation evidence, including security-assessment outputs, connectivity measurements, throughput tests and controlled failover results. Every field marked [INSERT] should be replaced with the corresponding recorded evidence.
+
+=== TABLE CELL PLACEHOLDERS ===

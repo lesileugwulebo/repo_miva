@@ -17,5 +17,4 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-data "azurerm_client_config" "current" {}
-data "azuread_client_config" "current" {}
+data "google_client_config" "current" {}

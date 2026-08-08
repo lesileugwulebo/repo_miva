@@ -20,34 +20,34 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-variable "azure_location" {
-  description = "Azure deployment region."
+variable "gcp_region" {
+  description = "GCP deployment region."
   type        = string
-  default     = "eastus"
+  default     = "us-east1"
 }
 
-variable "azure_subscription_id" {
-  description = "Azure subscription identifier."
+variable "gcp_project_id" {
+  description = "GCP project identifier."
   type        = string
-  sensitive   = true
+  default     = "mivafinalyearproject"
 }
 
-variable "azure_tenant_id" {
-  description = "Microsoft Entra tenant identifier."
+variable "gcp_user_email" {
+  description = "GCP user email for IAM bindings."
   type        = string
-  sensitive   = true
+  default     = "lesile.ugwulebo@gmail.com"
 }
 
 variable "aws_vpc_cidr" {
   description = "AWS VPC address space."
   type        = string
-  default     = "10.10.0.0/16"
+  default     = "10.121.0.0/16"
 }
 
-variable "azure_vnet_cidr" {
-  description = "Azure VNet address space."
+variable "gcp_vpc_cidr" {
+  description = "GCP VPC address space."
   type        = string
-  default     = "10.20.0.0/16"
+  default     = "10.181.0.0/16"
 }
 
 variable "administrator_cidr" {
@@ -63,10 +63,10 @@ variable "aws_instance_type" {
   default     = "t3.micro"
 }
 
-variable "azure_vm_size" {
-  description = "Azure VM size."
+variable "gcp_instance_type" {
+  description = "GCP Compute Engine instance size."
   type        = string
-  default     = "Standard_B1s"
+  default     = "e2-micro"
 }
 
 variable "database_name" {
@@ -93,7 +93,7 @@ variable "database_password" {
 }
 
 variable "vpn_shared_key_1" {
-  description = "Pre-shared key for the first selected AWS-Azure tunnel."
+  description = "Pre-shared key for the first selected AWS-GCP tunnel."
   type        = string
   sensitive   = true
   default     = "SecretVPNKeySharedKey1_2026!"
@@ -104,7 +104,7 @@ variable "vpn_shared_key_1" {
 }
 
 variable "vpn_shared_key_2" {
-  description = "Pre-shared key for the second selected AWS-Azure tunnel."
+  description = "Pre-shared key for the second selected AWS-GCP tunnel."
   type        = string
   sensitive   = true
   default     = "SecretVPNKeySharedKey2_2026!"
@@ -114,16 +114,16 @@ variable "vpn_shared_key_2" {
   }
 }
 
-variable "aws_tgw_asn" {
-  description = "Private ASN for AWS Transit Gateway."
-  type        = number
-  default     = 64512
-}
-
-variable "azure_vpn_asn" {
-  description = "Private ASN for Azure VPN Gateway."
+variable "aws_vpn_asn" {
+  description = "Private ASN for AWS VPN Gateway."
   type        = number
   default     = 65515
+}
+
+variable "gcp_vpn_asn" {
+  description = "Private ASN for GCP Cloud Router."
+  type        = number
+  default     = 64512
 }
 
 variable "enable_guardduty" {
@@ -132,8 +132,8 @@ variable "enable_guardduty" {
   default     = true
 }
 
-variable "enable_defender" {
-  description = "Enable selected Microsoft Defender for Cloud plans."
+variable "enable_scc" {
+  description = "Enable Google Cloud Security Command Center (Mocked/Variables placeholder)."
   type        = bool
   default     = true
 }

@@ -7,64 +7,66 @@ locals {
     ManagedBy    = "Terraform"
     Purpose      = "MIVA MIT Professional Project"
     DataClass    = "Synthetic"
-    Architecture = "AWS-Azure-MultiCloud"
+    Architecture = "AWS-GCP-MultiCloud"
   }
 
-  aws_subnets = {
+  # GCP Subnets (VPC CIDR: 10.181.0.0/16)
+  gcp_subnets = {
     public_a = {
-      cidr   = "10.10.10.0/24"
-      public = true
-      az     = 0
+      cidr = "10.181.10.0/24"
+      zone = "${var.gcp_region}-a"
     }
     public_b = {
-      cidr   = "10.10.11.0/24"
-      public = true
-      az     = 1
+      cidr = "10.181.11.0/24"
+      zone = "${var.gcp_region}-b"
     }
     web_a = {
-      cidr   = "10.10.20.0/24"
-      public = false
-      az     = 0
+      cidr = "10.181.20.0/24"
+      zone = "${var.gcp_region}-a"
     }
     web_b = {
-      cidr   = "10.10.21.0/24"
-      public = false
-      az     = 1
+      cidr = "10.181.21.0/24"
+      zone = "${var.gcp_region}-b"
     }
     app_a = {
-      cidr   = "10.10.30.0/24"
-      public = false
-      az     = 0
+      cidr = "10.181.30.0/24"
+      zone = "${var.gcp_region}-a"
     }
     app_b = {
-      cidr   = "10.10.31.0/24"
-      public = false
-      az     = 1
+      cidr = "10.181.31.0/24"
+      zone = "${var.gcp_region}-b"
     }
     db_a = {
-      cidr   = "10.10.40.0/24"
-      public = false
-      az     = 0
+      cidr = "10.181.40.0/24"
+      zone = "${var.gcp_region}-a"
     }
     db_b = {
-      cidr   = "10.10.41.0/24"
-      public = false
-      az     = 1
+      cidr = "10.181.41.0/24"
+      zone = "${var.gcp_region}-b"
     }
     management = {
-      cidr   = "10.10.50.0/24"
-      public = false
-      az     = 0
+      cidr = "10.181.50.0/24"
+      zone = "${var.gcp_region}-a"
     }
-    transit_a = {
-      cidr   = "10.10.60.0/28"
-      public = false
-      az     = 0
+  }
+
+  # AWS Subnets (VPC CIDR: 10.121.0.0/16)
+  aws_subnets = {
+    gateway = {
+      cidr = "10.121.0.0/27"
+      az   = "${var.aws_region}a"
     }
-    transit_b = {
-      cidr   = "10.10.60.16/28"
-      public = false
-      az     = 1
+    service = {
+      cidr = "10.121.10.0/24"
+      az   = "${var.aws_region}a"
+    }
+    monitoring = {
+      cidr = "10.121.20.0/24"
+      az   = "${var.aws_region}b"
+    }
+    management = {
+      cidr = "10.121.30.0/24"
+      az   = "${var.aws_region}a"
     }
   }
 }

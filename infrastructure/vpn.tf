@@ -1,121 +1,84 @@
-# Azure Active-Active Public IPs
-resource "azurerm_public_ip" "vpn_1" {
-  name                = "pip-${local.name_prefix}-vpn-1"
-  location            = azurerm_resource_group.main.location
-  resource_group_name = azurerm_resource_group.main.name
-  allocation_method   = "Static"
-  sku                 = "Standard"
-  zones               = ["1", "2", "3"]
-
-  tags = local.common_tags
+# GCP HA VPN Gateway
+resource "google_compute_ha_vpn_gateway" "main" {
+  name    = "${local.name_prefix}-gcp-vpn"
+  network = google_compute_network.main.id
+  region  = var.gcp_region
 }
 
-resource "azurerm_public_ip" "vpn_2" {
-  name                = "pip-${local.name_prefix}-vpn-2"
-  location            = azurerm_resource_group.main.location
-  resource_group_name = azurerm_resource_group.main.name
-  allocation_method   = "Static"
-  sku                 = "Standard"
-  zones               = ["1", "2", "3"]
-
-  tags = local.common_tags
-}
-
-# Azure Active-Active VPN Gateway
-resource "azurerm_virtual_network_gateway" "main" {
-  name                = "vng-${local.name_prefix}"
-  location            = azurerm_resource_group.main.location
-  resource_group_name = azurerm_resource_group.main.name
-  type                = "Vpn"
-  vpn_type            = "RouteBased"
-  active_active       = true
-  bgp_enabled         = true
-  sku                 = "VpnGw2AZ"
-  generation          = "Generation2"
-
-  ip_configuration {
-    name                          = "vng-ipconfig-1"
-    public_ip_address_id          = azurerm_public_ip.vpn_1.id
-    private_ip_address_allocation = "Dynamic"
-    subnet_id                     = azurerm_subnet.gateway.id
-  }
-
-  ip_configuration {
-    name                          = "vng-ipconfig-2"
-    public_ip_address_id          = azurerm_public_ip.vpn_2.id
-    private_ip_address_allocation = "Dynamic"
-    subnet_id                     = azurerm_subnet.gateway.id
-  }
-
-  bgp_settings {
-    asn = var.azure_vpn_asn
-  }
-
-  tags = local.common_tags
-}
-
-# AWS Customer Gateways
-resource "aws_customer_gateway" "azure_1" {
-  bgp_asn    = var.azure_vpn_asn
-  ip_address = azurerm_public_ip.vpn_1.ip_address
+# AWS Customer Gateways (pointing to the GCP HA VPN IPs)
+resource "aws_customer_gateway" "gcp_1" {
+  bgp_asn    = var.gcp_vpn_asn
+  ip_address = google_compute_ha_vpn_gateway.main.vpn_interfaces[0].ip_address
   type       = "ipsec.1"
 
   tags = {
-    Name = "${local.name_prefix}-azure-cgw-1"
+    Name = "${local.name_prefix}-gcp-cgw-1"
   }
 }
 
-resource "aws_customer_gateway" "azure_2" {
-  bgp_asn    = var.azure_vpn_asn
-  ip_address = azurerm_public_ip.vpn_2.ip_address
+resource "aws_customer_gateway" "gcp_2" {
+  bgp_asn    = var.gcp_vpn_asn
+  ip_address = google_compute_ha_vpn_gateway.main.vpn_interfaces[1].ip_address
   type       = "ipsec.1"
 
   tags = {
-    Name = "${local.name_prefix}-azure-cgw-2"
+    Name = "${local.name_prefix}-gcp-cgw-2"
   }
 }
 
 # AWS VPN Connections
-resource "aws_vpn_connection" "azure_1" {
-  customer_gateway_id   = aws_customer_gateway.azure_1.id
+resource "aws_vpn_connection" "gcp_1" {
+  customer_gateway_id   = aws_customer_gateway.gcp_1.id
   transit_gateway_id    = aws_ec2_transit_gateway.main.id
   type                  = "ipsec.1"
   static_routes_only    = false
   tunnel1_preshared_key = var.vpn_shared_key_1
+  tunnel2_preshared_key = var.vpn_shared_key_2
   tunnel1_ike_versions  = ["ikev2"]
+  tunnel2_ike_versions  = ["ikev2"]
 
   tunnel1_phase1_encryption_algorithms = ["AES256"]
   tunnel1_phase1_integrity_algorithms  = ["SHA2-256"]
   tunnel1_phase1_dh_group_numbers      = [14]
+  tunnel2_phase1_encryption_algorithms = ["AES256"]
+  tunnel2_phase1_integrity_algorithms  = ["SHA2-256"]
+  tunnel2_phase1_dh_group_numbers      = [14]
 
   tunnel1_phase2_encryption_algorithms = ["AES256"]
   tunnel1_phase2_integrity_algorithms  = ["SHA2-256"]
   tunnel1_phase2_dh_group_numbers      = [14]
-
-  tunnel1_dpd_timeout_action = "restart"
+  tunnel2_phase2_encryption_algorithms = ["AES256"]
+  tunnel2_phase2_integrity_algorithms  = ["SHA2-256"]
+  tunnel2_phase2_dh_group_numbers      = [14]
 
   tags = {
     Name = "${local.name_prefix}-vpn-1"
   }
 }
 
-resource "aws_vpn_connection" "azure_2" {
-  customer_gateway_id   = aws_customer_gateway.azure_2.id
+resource "aws_vpn_connection" "gcp_2" {
+  customer_gateway_id   = aws_customer_gateway.gcp_2.id
   transit_gateway_id    = aws_ec2_transit_gateway.main.id
   type                  = "ipsec.1"
   static_routes_only    = false
-  tunnel1_preshared_key = var.vpn_shared_key_2
+  tunnel1_preshared_key = var.vpn_shared_key_1
+  tunnel2_preshared_key = var.vpn_shared_key_2
   tunnel1_ike_versions  = ["ikev2"]
+  tunnel2_ike_versions  = ["ikev2"]
 
   tunnel1_phase1_encryption_algorithms = ["AES256"]
   tunnel1_phase1_integrity_algorithms  = ["SHA2-256"]
   tunnel1_phase1_dh_group_numbers      = [14]
+  tunnel2_phase1_encryption_algorithms = ["AES256"]
+  tunnel2_phase1_integrity_algorithms  = ["SHA2-256"]
+  tunnel2_phase1_dh_group_numbers      = [14]
 
   tunnel1_phase2_encryption_algorithms = ["AES256"]
   tunnel1_phase2_integrity_algorithms  = ["SHA2-256"]
   tunnel1_phase2_dh_group_numbers      = [14]
-
-  tunnel1_dpd_timeout_action = "restart"
+  tunnel2_phase2_encryption_algorithms = ["AES256"]
+  tunnel2_phase2_integrity_algorithms  = ["SHA2-256"]
+  tunnel2_phase2_dh_group_numbers      = [14]
 
   tags = {
     Name = "${local.name_prefix}-vpn-2"
@@ -124,98 +87,173 @@ resource "aws_vpn_connection" "azure_2" {
 
 # AWS Transit Gateway Route Propagation
 resource "aws_ec2_transit_gateway_route_table_association" "vpn_1" {
-  transit_gateway_attachment_id  = aws_vpn_connection.azure_1.transit_gateway_attachment_id
+  transit_gateway_attachment_id  = aws_vpn_connection.gcp_1.transit_gateway_attachment_id
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.main.id
 }
 
 resource "aws_ec2_transit_gateway_route_table_propagation" "vpn_1" {
-  transit_gateway_attachment_id  = aws_vpn_connection.azure_1.transit_gateway_attachment_id
+  transit_gateway_attachment_id  = aws_vpn_connection.gcp_1.transit_gateway_attachment_id
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.main.id
 }
 
 resource "aws_ec2_transit_gateway_route_table_association" "vpn_2" {
-  transit_gateway_attachment_id  = aws_vpn_connection.azure_2.transit_gateway_attachment_id
+  transit_gateway_attachment_id  = aws_vpn_connection.gcp_2.transit_gateway_attachment_id
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.main.id
 }
 
 resource "aws_ec2_transit_gateway_route_table_propagation" "vpn_2" {
-  transit_gateway_attachment_id  = aws_vpn_connection.azure_2.transit_gateway_attachment_id
+  transit_gateway_attachment_id  = aws_vpn_connection.gcp_2.transit_gateway_attachment_id
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.main.id
 }
 
-# Azure Local Network Gateways & Connections
-resource "azurerm_local_network_gateway" "aws_1" {
-  name                = "lng-${local.name_prefix}-aws-1"
-  location            = azurerm_resource_group.main.location
-  resource_group_name = azurerm_resource_group.main.name
-  gateway_address     = aws_vpn_connection.azure_1.tunnel1_address
+# GCP External VPN Gateway representing the AWS VPN endpoints (4 tunnels)
+resource "google_compute_external_vpn_gateway" "aws" {
+  name            = "${local.name_prefix}-aws-cgw"
+  redundancy_type = "FOUR_IPS_REDUNDANCY"
+  description     = "AWS VPN Gateways"
 
-  bgp_settings {
-    asn                 = var.aws_tgw_asn
-    bgp_peering_address = aws_vpn_connection.azure_1.tunnel1_vgw_inside_address
+  interface {
+    id         = 0
+    ip_address = aws_vpn_connection.gcp_1.tunnel1_address
   }
-
-  tags = local.common_tags
+  interface {
+    id         = 1
+    ip_address = aws_vpn_connection.gcp_1.tunnel2_address
+  }
+  interface {
+    id         = 2
+    ip_address = aws_vpn_connection.gcp_2.tunnel1_address
+  }
+  interface {
+    id         = 3
+    ip_address = aws_vpn_connection.gcp_2.tunnel2_address
+  }
 }
 
-resource "azurerm_local_network_gateway" "aws_2" {
-  name                = "lng-${local.name_prefix}-aws-2"
-  location            = azurerm_resource_group.main.location
-  resource_group_name = azurerm_resource_group.main.name
-  gateway_address     = aws_vpn_connection.azure_2.tunnel1_address
+# GCP VPN Tunnels
 
-  bgp_settings {
-    asn                 = var.aws_tgw_asn
-    bgp_peering_address = aws_vpn_connection.azure_2.tunnel1_vgw_inside_address
-  }
-
-  tags = local.common_tags
+# Tunnel 1_1 (GCP Interface 0 -> AWS CGW 1 Tunnel 1)
+resource "google_compute_vpn_tunnel" "t1_1" {
+  name                            = "${local.name_prefix}-vpn-t1-1"
+  region                          = var.gcp_region
+  vpn_gateway                     = google_compute_ha_vpn_gateway.main.id
+  peer_external_gateway           = google_compute_external_vpn_gateway.aws.id
+  peer_external_gateway_interface = 0
+  shared_secret                   = var.vpn_shared_key_1
+  ike_version                     = 2
+  router                          = google_compute_router.router.name
+  vpn_gateway_interface           = 0
 }
 
-resource "azurerm_virtual_network_gateway_connection" "aws_1" {
-  name                       = "conn-${local.name_prefix}-aws-1"
-  location                   = azurerm_resource_group.main.location
-  resource_group_name        = azurerm_resource_group.main.name
-  type                       = "IPsec"
-  virtual_network_gateway_id = azurerm_virtual_network_gateway.main.id
-  local_network_gateway_id   = azurerm_local_network_gateway.aws_1.id
-  shared_key                 = var.vpn_shared_key_1
-  bgp_enabled                = true
-
-  ipsec_policy {
-    dh_group         = "DHGroup14"
-    ike_encryption   = "AES256"
-    ike_integrity    = "SHA256"
-    ipsec_encryption = "AES256"
-    ipsec_integrity  = "SHA256"
-    pfs_group        = "PFS14"
-    sa_datasize      = 102400000
-    sa_lifetime      = 27000
-  }
-
-  tags = local.common_tags
+# Tunnel 1_2 (GCP Interface 0 -> AWS CGW 1 Tunnel 2)
+resource "google_compute_vpn_tunnel" "t1_2" {
+  name                            = "${local.name_prefix}-vpn-t1-2"
+  region                          = var.gcp_region
+  vpn_gateway                     = google_compute_ha_vpn_gateway.main.id
+  peer_external_gateway           = google_compute_external_vpn_gateway.aws.id
+  peer_external_gateway_interface = 1
+  shared_secret                   = var.vpn_shared_key_2
+  ike_version                     = 2
+  router                          = google_compute_router.router.name
+  vpn_gateway_interface           = 0
 }
 
-resource "azurerm_virtual_network_gateway_connection" "aws_2" {
-  name                       = "conn-${local.name_prefix}-aws-2"
-  location                   = azurerm_resource_group.main.location
-  resource_group_name        = azurerm_resource_group.main.name
-  type                       = "IPsec"
-  virtual_network_gateway_id = azurerm_virtual_network_gateway.main.id
-  local_network_gateway_id   = azurerm_local_network_gateway.aws_2.id
-  shared_key                 = var.vpn_shared_key_2
-  bgp_enabled                = true
+# Tunnel 2_1 (GCP Interface 1 -> AWS CGW 2 Tunnel 1)
+resource "google_compute_vpn_tunnel" "t2_1" {
+  name                            = "${local.name_prefix}-vpn-t2-1"
+  region                          = var.gcp_region
+  vpn_gateway                     = google_compute_ha_vpn_gateway.main.id
+  peer_external_gateway           = google_compute_external_vpn_gateway.aws.id
+  peer_external_gateway_interface = 2
+  shared_secret                   = var.vpn_shared_key_1
+  ike_version                     = 2
+  router                          = google_compute_router.router.name
+  vpn_gateway_interface           = 1
+}
 
-  ipsec_policy {
-    dh_group         = "DHGroup14"
-    ike_encryption   = "AES256"
-    ike_integrity    = "SHA256"
-    ipsec_encryption = "AES256"
-    ipsec_integrity  = "SHA256"
-    pfs_group        = "PFS14"
-    sa_datasize      = 102400000
-    sa_lifetime      = 27000
-  }
+# Tunnel 2_2 (GCP Interface 1 -> AWS CGW 2 Tunnel 2)
+resource "google_compute_vpn_tunnel" "t2_2" {
+  name                            = "${local.name_prefix}-vpn-t2-2"
+  region                          = var.gcp_region
+  vpn_gateway                     = google_compute_ha_vpn_gateway.main.id
+  peer_external_gateway           = google_compute_external_vpn_gateway.aws.id
+  peer_external_gateway_interface = 3
+  shared_secret                   = var.vpn_shared_key_2
+  ike_version                     = 2
+  router                          = google_compute_router.router.name
+  vpn_gateway_interface           = 1
+}
 
-  tags = local.common_tags
+# BGP Interfaces and Peers on GCP Router
+
+# Peer 1_1
+resource "google_compute_router_interface" "t1_1" {
+  name       = "${local.name_prefix}-if-t1-1"
+  router     = google_compute_router.router.name
+  region     = var.gcp_region
+  ip_range   = "${aws_vpn_connection.gcp_1.tunnel1_cgw_inside_address}/30"
+  vpn_tunnel = google_compute_vpn_tunnel.t1_1.name
+}
+
+resource "google_compute_router_peer" "t1_1" {
+  name            = "${local.name_prefix}-peer-t1-1"
+  router          = google_compute_router.router.name
+  region          = var.gcp_region
+  interface       = google_compute_router_interface.t1_1.name
+  peer_ip_address = aws_vpn_connection.gcp_1.tunnel1_vgw_inside_address
+  peer_asn        = aws_vpn_connection.gcp_1.tunnel1_bgp_asn
+}
+
+# Peer 1_2
+resource "google_compute_router_interface" "t1_2" {
+  name       = "${local.name_prefix}-if-t1-2"
+  router     = google_compute_router.router.name
+  region     = var.gcp_region
+  ip_range   = "${aws_vpn_connection.gcp_1.tunnel2_cgw_inside_address}/30"
+  vpn_tunnel = google_compute_vpn_tunnel.t1_2.name
+}
+
+resource "google_compute_router_peer" "t1_2" {
+  name            = "${local.name_prefix}-peer-t1-2"
+  router          = google_compute_router.router.name
+  region          = var.gcp_region
+  interface       = google_compute_router_interface.t1_2.name
+  peer_ip_address = aws_vpn_connection.gcp_1.tunnel2_vgw_inside_address
+  peer_asn        = aws_vpn_connection.gcp_1.tunnel2_bgp_asn
+}
+
+# Peer 2_1
+resource "google_compute_router_interface" "t2_1" {
+  name       = "${local.name_prefix}-if-t2-1"
+  router     = google_compute_router.router.name
+  region     = var.gcp_region
+  ip_range   = "${aws_vpn_connection.gcp_2.tunnel1_cgw_inside_address}/30"
+  vpn_tunnel = google_compute_vpn_tunnel.t2_1.name
+}
+
+resource "google_compute_router_peer" "t2_1" {
+  name            = "${local.name_prefix}-peer-t2-1"
+  router          = google_compute_router.router.name
+  region          = var.gcp_region
+  interface       = google_compute_router_interface.t2_1.name
+  peer_ip_address = aws_vpn_connection.gcp_2.tunnel1_vgw_inside_address
+  peer_asn        = aws_vpn_connection.gcp_2.tunnel1_bgp_asn
+}
+
+# Peer 2_2
+resource "google_compute_router_interface" "t2_2" {
+  name       = "${local.name_prefix}-if-t2-2"
+  router     = google_compute_router.router.name
+  region     = var.gcp_region
+  ip_range   = "${aws_vpn_connection.gcp_2.tunnel2_cgw_inside_address}/30"
+  vpn_tunnel = google_compute_vpn_tunnel.t2_2.name
+}
+
+resource "google_compute_router_peer" "t2_2" {
+  name            = "${local.name_prefix}-peer-t2-2"
+  router          = google_compute_router.router.name
+  region          = var.gcp_region
+  interface       = google_compute_router_interface.t2_2.name
+  peer_ip_address = aws_vpn_connection.gcp_2.tunnel2_vgw_inside_address
+  peer_asn        = aws_vpn_connection.gcp_2.tunnel2_bgp_asn
 }

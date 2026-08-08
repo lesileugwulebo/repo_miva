@@ -1,0 +1,7 @@
+direction,parallel_streams,receiver_mbps
+GCP -> AWS,1,82.4
+GCP -> AWS,4,145.2
+GCP -> AWS,8,168.0
+AWS -> GCP,1,79.8
+AWS -> GCP,4,141.0
+AWS -> GCP,8,162.5

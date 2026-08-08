@@ -5,13 +5,9 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.0"
     }
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~> 4.0"
-    }
-    azuread = {
-      source  = "hashicorp/azuread"
-      version = "~> 3.0"
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 5.0"
     }
     random = {
       source  = "hashicorp/random"
