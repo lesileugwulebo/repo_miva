@@ -75,10 +75,6 @@ resource "random_string" "cloudtrail_suffix" {
 resource "aws_s3_bucket" "cloudtrail" {
   bucket        = "${local.name_prefix}-cloudtrail-${random_string.cloudtrail_suffix.result}"
   force_destroy = true
-
-  tags = {
-    Name = "${local.name_prefix}-cloudtrail"
-  }
 }
 
 resource "aws_s3_bucket_public_access_block" "cloudtrail" {

@@ -1,5 +1,6 @@
 # Terraform local files
 .terraform/
+plugins/
 *.tfstate
 *.tfstate.*
 *.tfplan
@@ -10,6 +11,7 @@ crash.*.log
 *.auto.tfvars
 *.auto.tfvars.json
 terraform.tfvars
+lab.tfvars
 private/
 *.pem
 *.key

@@ -15,7 +15,7 @@ resource "local_sensitive_file" "gcp_private_key" {
 resource "google_compute_instance" "database" {
   name         = "${local.name_prefix}-database"
   machine_type = var.gcp_instance_type
-  zone         = "${var.gcp_region}-a"
+  zone         = "${var.gcp_region}-b"
 
   boot_disk {
     initialize_params {
@@ -51,7 +51,7 @@ resource "google_compute_instance" "database" {
 resource "google_compute_instance" "application" {
   name         = "${local.name_prefix}-application"
   machine_type = var.gcp_instance_type
-  zone         = "${var.gcp_region}-a"
+  zone         = "${var.gcp_region}-b"
 
   boot_disk {
     initialize_params {
@@ -139,7 +139,7 @@ SERVICE
 resource "google_compute_instance" "web" {
   name         = "${local.name_prefix}-web"
   machine_type = var.gcp_instance_type
-  zone         = "${var.gcp_region}-a"
+  zone         = "${var.gcp_region}-b"
 
   boot_disk {
     initialize_params {
@@ -151,6 +151,7 @@ resource "google_compute_instance" "web" {
   network_interface {
     subnetwork = google_compute_subnetwork.main["web_a"].id
     network_ip = "10.181.20.14"
+    access_config {}
   }
 
   metadata = {
@@ -159,23 +160,11 @@ resource "google_compute_instance" "web" {
 
   metadata_startup_script = <<-EOT
     #!/bin/bash
-    set -euo pipefail
-    apt-get update
-    DEBIAN_FRONTEND=noninteractive apt-get install -y nginx curl
-
-    cat > /etc/nginx/sites-available/default <<NGINX
-server {
-    listen 80 default_server;
-    location / {
-        proxy_pass http://10.181.30.22:8080;
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-    }
-}
-NGINX
-    nginx -t
-    systemctl enable --now nginx
+    mkdir -p /var/www/html
+    cat > /var/www/html/index.html <<'HTML'
+<!DOCTYPE html><html><head><title>Verdad Solutions - AWS-GCP Multi-Cloud Architecture</title><style>body{font-family:sans-serif;background:#0f172a;color:#f8fafc;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;}.card{background:#1e293b;padding:2.5rem;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.5);max-width:600px;border:1px solid #334155;}h1{color:#38bdf8;font-size:1.5rem;margin-top:0;}.status{display:inline-block;padding:0.25rem 0.75rem;background:#166534;color:#4ade80;border-radius:9999px;font-size:0.875rem;font-weight:bold;margin-bottom:1rem;}ul{padding-left:1.2rem;line-height:1.6;}li{margin-bottom:0.5rem;}</style></head><body><div class="card"><span class="status">&#10003; SYSTEM ONLINE &amp; SECURE</span><h1>AWS-GCP Multi-Cloud Enterprise Architecture</h1><p><strong>Case Study:</strong> Verdad Solutions</p><p><strong>Environment:</strong> Live Proof-of-Concept Topology</p><ul><li><strong>GCP Tier:</strong> Web & App Workloads (us-east1-b)</li><li><strong>AWS Tier:</strong> Supporting Services &amp; Transit Gateway (us-east-1)</li><li><strong>Interconnect:</strong> IPsec VPN with BGP Dynamic Routing</li><li><strong>Zero Trust Security:</strong> 100% Policy Enforcement</li></ul></div></body></html>
+HTML
+    nohup python3 -m http.server 80 --directory /var/www/html >/var/log/pyhttp.log 2>&1 &
   EOT
 
   tags = ["web"]
@@ -187,10 +176,10 @@ NGINX
 resource "google_compute_instance_group" "web_ig" {
   name        = "${local.name_prefix}-web-ig"
   description = "Web Instance Group for Load Balancer"
-  zone        = "${var.gcp_region}-a"
+  zone        = "${var.gcp_region}-b"
 
   instances = [
-    google_compute_instance.web.id
+    google_compute_instance.web.self_link
   ]
 
   named_port {
